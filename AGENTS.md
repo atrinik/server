@@ -6,7 +6,7 @@ These instructions apply to the entire `atrinik/server` repository.
 
 - This repository is the fresh MIT-licensed authoritative Atrinik game server
   implemented in Go. It is an independent implementation, not a port of
-  `atrinik/legacy-server`.
+  the [`server/` module of `atrinik/classic`](https://github.com/atrinik/classic/tree/main/server).
 - Own simulation, authorization, sessions, persistence, native gameplay
   services, compiled-content consumption, bounded expression evaluation, and
   production server operation here.
