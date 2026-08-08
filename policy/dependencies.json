@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "allowed_spdx": ["Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "MIT"],
+  "forbidden_spdx": ["AGPL-1.0-only", "AGPL-1.0-or-later", "AGPL-3.0-only", "AGPL-3.0-or-later", "GPL-1.0-only", "GPL-1.0-or-later", "GPL-2.0-only", "GPL-2.0-or-later", "GPL-3.0-only", "GPL-3.0-or-later"],
+  "modules": [
+    {"name": "github.com/cespare/xxhash/v2", "version": "v2.3.0", "license": "MIT", "source": "https://github.com/cespare/xxhash"},
+    {"name": "github.com/go-logr/logr", "version": "v1.4.4", "license": "Apache-2.0", "source": "https://github.com/go-logr/logr"},
+    {"name": "github.com/go-logr/stdr", "version": "v1.2.2", "license": "Apache-2.0", "source": "https://github.com/go-logr/stdr"},
+    {"name": "go.opentelemetry.io/auto/sdk", "version": "v1.2.1", "license": "Apache-2.0", "source": "https://github.com/open-telemetry/opentelemetry-go-instrumentation"},
+    {"name": "go.opentelemetry.io/otel", "version": "v1.45.0", "license": "Apache-2.0", "source": "https://github.com/open-telemetry/opentelemetry-go"},
+    {"name": "go.opentelemetry.io/otel/metric", "version": "v1.45.0", "license": "Apache-2.0", "source": "https://github.com/open-telemetry/opentelemetry-go"},
+    {"name": "go.opentelemetry.io/otel/trace", "version": "v1.45.0", "license": "Apache-2.0", "source": "https://github.com/open-telemetry/opentelemetry-go"}
+  ],
+  "governance": {
+    "owner": "server maintainers",
+    "review_cadence": "monthly and on every dependency update",
+    "eol_response": "upgrade, replace, or remove before an unsupported release ships",
+    "validation": "go mod verify, go list -deps, govulncheck, go-licenses, tests, Syft release SBOM"
+  },
+  "tools": [
+    {"name": "Go", "version": "1.26.5", "source": "https://go.dev/dl/", "license": "BSD-3-Clause"},
+    {"name": "staticcheck", "version": "0.7.0", "source": "https://pkg.go.dev/honnef.co/go/tools/cmd/staticcheck", "license": "MIT"},
+    {"name": "govulncheck", "version": "1.6.0", "source": "https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck", "license": "BSD-3-Clause"},
+    {"name": "go-licenses", "version": "1.6.0", "source": "https://github.com/google/go-licenses", "license": "Apache-2.0"},
+    {"name": "Syft", "version": "1.50.0", "source": "https://github.com/anchore/syft", "license": "Apache-2.0", "linux_amd64_sha256": "bf7b29ff57f06da30918266a0e1c2885a8f99784798d1bdb1628886aa015d788"},
+    {"name": "semantic-release", "version": "25.0.9", "source": "https://github.com/semantic-release/semantic-release", "license": "MIT"},
+    {"name": "zip", "version": "3.x", "source": "https://infozip.sourceforge.net/", "license": "Info-ZIP"},
+    {"name": "jq", "version": "1.x", "source": "https://github.com/jqlang/jq", "license": "MIT"}
+  ],
+  "actions": [
+    {"name": "actions/checkout", "revision": "3d3c42e5aac5ba805825da76410c181273ba90b1", "version_hint": "v7.0.1", "source": "https://github.com/actions/checkout"},
+    {"name": "actions/setup-go", "revision": "924ae3a1cded613372ab5595356fb5720e22ba16", "version_hint": "v6.0.0", "source": "https://github.com/actions/setup-go"}
+  ]
+}
