@@ -26,9 +26,16 @@ jobs:
         with:
           go-version-file: .go-version
           cache: true
-      - uses: anchore/sbom-action/download-syft@e22c389904149dbc22b58101806040fa8d37a610 # v0
-        with:
-          syft-version: v1.50.0
+      - name: Install pinned Syft
+        run: |
+          install -d "${RUNNER_TEMP}/bin"
+          curl --fail --silent --show-error --location \
+            https://github.com/anchore/syft/releases/download/v1.50.0/syft_1.50.0_linux_amd64.tar.gz \
+            --output "${RUNNER_TEMP}/syft.tar.gz"
+          printf '%s  %s\n' bf7b29ff57f06da30918266a0e1c2885a8f99784798d1bdb1628886aa015d788 "${RUNNER_TEMP}/syft.tar.gz" \
+            | sha256sum --check --strict
+          tar -xzf "${RUNNER_TEMP}/syft.tar.gz" -C "${RUNNER_TEMP}/bin" syft
+          echo "${RUNNER_TEMP}/bin" >>"${GITHUB_PATH}"
       - name: Install pinned quality tools
         run: |
           go install honnef.co/go/tools/cmd/staticcheck@v0.7.0

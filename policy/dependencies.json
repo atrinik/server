@@ -22,14 +22,13 @@
     {"name": "staticcheck", "version": "0.7.0", "source": "https://pkg.go.dev/honnef.co/go/tools/cmd/staticcheck", "license": "MIT"},
     {"name": "govulncheck", "version": "1.6.0", "source": "https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck", "license": "BSD-3-Clause"},
     {"name": "go-licenses", "version": "1.6.0", "source": "https://github.com/google/go-licenses", "license": "Apache-2.0"},
-    {"name": "Syft", "version": "1.50.0", "source": "https://github.com/anchore/syft", "license": "Apache-2.0"},
+    {"name": "Syft", "version": "1.50.0", "source": "https://github.com/anchore/syft", "license": "Apache-2.0", "linux_amd64_sha256": "bf7b29ff57f06da30918266a0e1c2885a8f99784798d1bdb1628886aa015d788"},
     {"name": "semantic-release", "version": "25.0.9", "source": "https://github.com/semantic-release/semantic-release", "license": "MIT"},
     {"name": "zip", "version": "3.x", "source": "https://infozip.sourceforge.net/", "license": "Info-ZIP"},
     {"name": "jq", "version": "1.x", "source": "https://github.com/jqlang/jq", "license": "MIT"}
   ],
   "actions": [
     {"name": "actions/checkout", "revision": "3d3c42e5aac5ba805825da76410c181273ba90b1", "version_hint": "v7.0.1", "source": "https://github.com/actions/checkout"},
-    {"name": "actions/setup-go", "revision": "924ae3a1cded613372ab5595356fb5720e22ba16", "version_hint": "v6.0.0", "source": "https://github.com/actions/setup-go"},
-    {"name": "anchore/sbom-action", "revision": "e22c389904149dbc22b58101806040fa8d37a610", "version_hint": "v0", "source": "https://github.com/anchore/sbom-action"}
+    {"name": "actions/setup-go", "revision": "924ae3a1cded613372ab5595356fb5720e22ba16", "version_hint": "v6.0.0", "source": "https://github.com/actions/setup-go"}
   ]
 }
