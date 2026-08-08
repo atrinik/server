@@ -44,10 +44,11 @@ func (tracer Tracer) Start(ctx context.Context, name string, fields ...Field) (c
 
 func spanAttributes(fields []Field) []attribute.KeyValue {
 	attributes := make([]attribute.KeyValue, 0, len(fields))
+	redacted := false
 	for _, field := range fields {
 		key := strings.ToLower(strings.TrimSpace(field.key))
 		if _, sensitive := secretKeys[key]; sensitive {
-			attributes = append(attributes, attribute.Bool("atrinik.redacted", true))
+			redacted = true
 			continue
 		}
 		if !stableName.MatchString(key) || len(key) > maxFieldKey {
@@ -55,14 +56,17 @@ func spanAttributes(fields []Field) []attribute.KeyValue {
 		}
 		switch value := field.value.(type) {
 		case string:
-			if _, allowed := allowedStringFields[key]; allowed {
-				attributes = append(attributes, attribute.String("atrinik."+key, truncate(value, maxFieldValue)))
+			if normalized, allowed := validatedStringField(key, value); allowed {
+				attributes = append(attributes, attribute.String("atrinik."+key, normalized))
 			}
 		case int64:
 			attributes = append(attributes, attribute.Int64("atrinik."+key, value))
 		case bool:
 			attributes = append(attributes, attribute.Bool("atrinik."+key, value))
 		}
+	}
+	if redacted {
+		attributes = append(attributes, attribute.Bool("atrinik.redacted", true))
 	}
 	if len(attributes) == 0 {
 		return nil

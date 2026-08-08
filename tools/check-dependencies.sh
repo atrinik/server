@@ -33,3 +33,15 @@ if grep -Eiq '(^|[,;[:space:]])(AGPL|GPL)-?[123](\.[0-9])?([+-]|$|[,;[:space:]])
   cat "${licenses}" >&2
   exit 1
 fi
+
+while IFS=, read -r _module _source license; do
+  if ! jq -e --arg license "${license}" '.allowed_spdx | index($license) != null' policy/dependencies.json >/dev/null; then
+    echo "dependency has an unapproved or unknown license: ${license}" >&2
+    exit 1
+  fi
+done <"${licenses}"
+
+generated=$(mktemp /tmp/atrinik-server-notices.XXXXXX)
+trap 'rm -f -- "${actual}" "${expected}" "${licenses}" "${generated}"' EXIT
+tools/generate-notices.sh >"${generated}"
+diff -u THIRD_PARTY_NOTICES.md "${generated}"

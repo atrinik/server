@@ -28,3 +28,12 @@ queue capacity. Later region partitioning must retain these contracts.
 Shutdown order is fixed: stop admission, drain connections, quiesce simulation,
 checkpoint persistence, then flush telemetry. Each stage owns its failure;
 errors are joined after all safe cleanup is attempted.
+
+Failure ownership is explicit:
+
+| Failure | Owner and bounded response |
+| --- | --- |
+| Malformed or unauthorized client input | Transport validates before enqueue, rejects the request/connection, and records only a safe category. |
+| Invalid compiled content | Content adapter rejects the immutable catalog before readiness; active state never observes a partial catalog. |
+| Persistence conflict or I/O failure | Storage transaction rolls back; the application applies a bounded retry/service-degradation policy before acknowledging durable work. |
+| Internal invariant violation or panic | The owning partition/lifecycle supervisor contains the failure, stops admission, preserves diagnostics, and initiates safe shutdown; it never continues partially mutated work. |

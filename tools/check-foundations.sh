@@ -24,6 +24,12 @@ for document in "${required[@]}"; do
   test -s "${document}"
 done
 
+if grep -RhE '^[[:space:]]*uses:' .github/workflows \
+  | grep -Ev '@[0-9a-f]{40}([[:space:]]|$)' >/dev/null; then
+  echo "workflow action is not pinned to an immutable commit" >&2
+  exit 1
+fi
+
 if find . -path ./.git -prune -o -type f \( -name '*_generated.go' -o -name '*.pb.go' \) -print -quit | grep -q .; then
   echo "generated Go was added without a registered generator/drift contract" >&2
   exit 1

@@ -23,6 +23,7 @@ const (
 )
 
 var stableName = regexp.MustCompile(`^[a-z][a-z0-9]*(?:[.-][a-z0-9]+)*$`)
+var safeIdentifier = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._:-]*$`)
 
 var secretKeys = map[string]struct{}{
 	"account": {}, "admin-token": {}, "admin_token": {}, "authorization": {},
@@ -33,7 +34,7 @@ var secretKeys = map[string]struct{}{
 var allowedStringFields = map[string]struct{}{
 	"component": {}, "diagnostic-id": {}, "kind": {}, "map-id": {},
 	"operation-id": {}, "reason": {}, "result": {}, "session-safe-id": {},
-	"source": {}, "stage": {},
+	"stage": {},
 }
 
 // Field is one bounded typed log field.
@@ -107,10 +108,11 @@ func (logger *Logger) Event(ctx context.Context, level slog.Level, subsystem, na
 	if len(fields) > maxFields {
 		fields = fields[:maxFields]
 	}
+	redacted := false
 	for _, field := range fields {
 		key := strings.ToLower(strings.TrimSpace(field.key))
 		if _, sensitive := secretKeys[key]; sensitive {
-			attributes = append(attributes, "redacted", true)
+			redacted = true
 			continue
 		}
 		if !stableName.MatchString(key) || len(key) > maxFieldKey {
@@ -118,18 +120,34 @@ func (logger *Logger) Event(ctx context.Context, level slog.Level, subsystem, na
 		}
 		switch value := field.value.(type) {
 		case string:
-			if _, allowed := allowedStringFields[key]; allowed {
-				attributes = append(attributes, key, truncate(value, maxFieldValue))
+			if normalized, allowed := validatedStringField(key, value); allowed {
+				attributes = append(attributes, key, normalized)
 			}
 		case int64, bool:
 			attributes = append(attributes, key, value)
 		}
+	}
+	if redacted {
+		attributes = append(attributes, "redacted", true)
 	}
 	var callers [1]uintptr
 	runtime.Callers(2, callers[:])
 	record := slog.NewRecord(time.Now().UTC(), level, truncate(message, maxMessage), callers[0])
 	record.Add(attributes...)
 	_ = logger.logger.Handler().Handle(ctx, record)
+}
+
+func validatedStringField(key, value string) (string, bool) {
+	if _, allowed := allowedStringFields[key]; !allowed {
+		return "", false
+	}
+	value = truncate(value, maxFieldValue)
+	switch key {
+	case "component", "kind", "reason", "result", "stage":
+		return value, len(value) <= maxEventName && stableName.MatchString(value)
+	default:
+		return value, len(value) <= maxFieldValue && safeIdentifier.MatchString(value)
+	}
 }
 
 // Audit emits a separately classified privileged/security event.

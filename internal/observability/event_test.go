@@ -34,6 +34,23 @@ func TestJSONEventsAreBoundedAndRedacted(t *testing.T) {
 	}
 }
 
+func TestUnclassifiedAndMalformedStringFieldsAreDropped(t *testing.T) {
+	t.Parallel()
+	var output bytes.Buffer
+	logger, err := NewLogger(&output, "json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	logger.Event(context.Background(), slog.LevelInfo, "network", "packet.rejected", "rejected",
+		String("player-name", "private"), String("reason", "arbitrary prose"), String("diagnostic-id", "contains spaces"), String("result", "invalid-input"))
+	if strings.Contains(output.String(), "private") || strings.Contains(output.String(), "arbitrary prose") || strings.Contains(output.String(), "contains spaces") {
+		t.Fatal("unclassified or malformed string entered event")
+	}
+	if !strings.Contains(output.String(), `"result":"invalid-input"`) {
+		t.Fatal("bounded enum field was not retained")
+	}
+}
+
 func FuzzJSONEventNeverEmitsSecret(f *testing.F) {
 	f.Add("secret", "ordinary")
 	f.Fuzz(func(t *testing.T, secret, message string) {

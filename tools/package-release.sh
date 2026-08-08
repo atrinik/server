@@ -46,6 +46,10 @@ git archive --format=tar --prefix="atrinik-server-${version}/" HEAD \
 SYFT_CHECK_FOR_APP_UPDATE=false syft dir:"${temporary}" \
   --source-name atrinik-server --source-version "${version}" \
   --output "cyclonedx-json=${output}/sbom.cdx.json"
+if grep -Eiq 'AGPL-[123]|GPL-[123]' "${output}/sbom.cdx.json"; then
+  echo "release SBOM contains a forbidden reciprocal license" >&2
+  exit 1
+fi
 cp policy/dependencies.json "${output}/dependency-policy.json"
 jq -n \
   --arg version "${version}" --arg revision "${revision}" \

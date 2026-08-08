@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -51,7 +52,8 @@ func Default() Config {
 // Validate checks every field without touching the filesystem or network.
 func (configuration Config) Validate() error {
 	host, port, err := net.SplitHostPort(configuration.ListenAddress)
-	if err != nil || host == "" || port == "" {
+	portNumber, portErr := strconv.Atoi(port)
+	if err != nil || host == "" || strings.TrimSpace(host) != host || portErr != nil || portNumber < 1 || portNumber > 65_535 {
 		return errors.New("listen address must contain a host and port")
 	}
 	if configuration.StateDirectory == "" || len(configuration.StateDirectory) > 4_096 || strings.ContainsRune(configuration.StateDirectory, 0) || filepath.IsAbs(configuration.StateDirectory) || hasParentSegment(configuration.StateDirectory) {

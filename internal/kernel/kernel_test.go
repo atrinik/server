@@ -100,6 +100,30 @@ func TestSequenceOverflowFailsClosed(t *testing.T) {
 	}
 }
 
+func TestTickBudgetAndCancellation(t *testing.T) {
+	t.Parallel()
+	world := NewWorld()
+	queue, err := NewQueue[Command](3)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for sequence := uint64(1); sequence <= 3; sequence++ {
+		if err := queue.Push(Command{Sequence: sequence, Kind: Spawn, Entity: Handle{ID: sequence, Generation: 1}}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	processed, err := RunTick(context.Background(), world, queue, 2)
+	if err != nil || processed != 2 || queue.Len() != 1 || world.Snapshot().Revision != 2 {
+		t.Fatalf("tick = (%d, %v), depth = %d, revision = %d", processed, err, queue.Len(), world.Snapshot().Revision)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	processed, err = RunTick(ctx, world, queue, 2)
+	if !errors.Is(err, context.Canceled) || processed != 0 || queue.Len() != 1 {
+		t.Fatalf("canceled tick = (%d, %v), depth = %d", processed, err, queue.Len())
+	}
+}
+
 func TestQueueSaturationCloseAndConcurrentSubmission(t *testing.T) {
 	t.Parallel()
 	queue, err := NewQueue[int](32)
@@ -132,9 +156,38 @@ func TestQueueSaturationCloseAndConcurrentSubmission(t *testing.T) {
 	}
 }
 
-func BenchmarkEmptySnapshot(b *testing.B) {
+func BenchmarkSnapshotDigest(b *testing.B) {
 	world := NewWorld()
 	for b.Loop() {
 		_ = world.Snapshot()
+	}
+}
+
+func BenchmarkEmptyTick(b *testing.B) {
+	world := NewWorld()
+	queue, err := NewQueue[Command](1)
+	if err != nil {
+		b.Fatal(err)
+	}
+	ctx := context.Background()
+	for b.Loop() {
+		if processed, err := RunTick(ctx, world, queue, 1); err != nil || processed != 0 {
+			b.Fatalf("empty tick = (%d, %v)", processed, err)
+		}
+	}
+}
+
+func BenchmarkBoundedQueueRoundTrip(b *testing.B) {
+	queue, err := NewQueue[int](1)
+	if err != nil {
+		b.Fatal(err)
+	}
+	for b.Loop() {
+		if err := queue.Push(1); err != nil {
+			b.Fatal(err)
+		}
+		if _, found := queue.Pop(); !found {
+			b.Fatal("queued item disappeared")
+		}
 	}
 }
