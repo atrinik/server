@@ -1,0 +1,48 @@
+name: Semantic Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: server-semantic-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release server
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.0.0
+        with:
+          go-version-file: .go-version
+          cache: true
+      - uses: anchore/sbom-action/download-syft@e22c389904149dbc22b58101806040fa8d37a610 # v0
+        with:
+          syft-version: v1.50.0
+      - name: Install pinned quality tools
+        run: |
+          go install honnef.co/go/tools/cmd/staticcheck@v0.7.0
+          go install golang.org/x/vuln/cmd/govulncheck@v1.6.0
+          go install github.com/google/go-licenses@v1.6.0
+      - name: Revalidate the exact release revision
+        run: tools/validate.sh
+      - name: Analyze commits, build immutable assets, and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          npx --yes
+          --package=semantic-release@25.0.9
+          --package=@semantic-release/exec@7.1.0
+          --package=conventional-changelog-conventionalcommits@9.3.1
+          semantic-release

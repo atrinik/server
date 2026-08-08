@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "source": {
+    "repository": "atrinik/content",
+    "branch": "main",
+    "revision": "60a3a53c4e3e64293cdba21c91caf0c7a618764d",
+    "path": "provenance/m1/python-behaviors.jsonl",
+    "sha256": "4536b668a88e22c76b9a7a48878f5b51872120143679782f5137f4ae9f1ae2ce",
+    "baseline_tag": "v1.8.1",
+    "baseline_revision": "01b1fdb65c2243df4bafe9c8109fc93229df0121"
+  },
+  "inventory": {
+    "python_rows": 177,
+    "production_runtime_rows": 117,
+    "test_and_mock_rows": 13,
+    "offline_toolkit_rows": 47,
+    "authored_interface_xml": 83,
+    "authored_quest_xml": 16,
+    "unowned_rows": 0,
+    "python_compatibility_host": false
+  },
+  "replacement_classes": {
+    "native_go_domain_service": 61,
+    "explicit_go_handler": 24,
+    "bounded_authored_action_candidate": 32,
+    "offline_content_toolkit": 47,
+    "deliberate_test_or_mock_retirement": 13
+  },
+  "owners": [
+    "account/session events",
+    "apartments/houses",
+    "auction/post",
+    "bank/merchant/economy",
+    "commands/global events",
+    "compiled authored actions",
+    "content toolkit",
+    "guards/jail",
+    "guilds/parties",
+    "interfaces/dialogue",
+    "items/monsters",
+    "quests",
+    "server testkit"
+  ],
+  "status": "canonical_inventory_linked_zero_unowned",
+  "implementation_rule": "Rows are independently characterized from public behavior and authored data; no GPL source or test is an implementation specification.",
+  "starlark": "not_approved; the 32 residual candidates remain bounded authored-action candidates until the separate evidence gate",
+  "runtime_python": "forbidden"
+}
