@@ -56,7 +56,7 @@ func (configuration Config) Validate() error {
 	if err != nil || host == "" || strings.TrimSpace(host) != host || portErr != nil || portNumber < 1 || portNumber > 65_535 {
 		return errors.New("listen address must contain a host and port")
 	}
-	if configuration.StateDirectory == "" || len(configuration.StateDirectory) > 4_096 || strings.ContainsRune(configuration.StateDirectory, 0) || filepath.IsAbs(configuration.StateDirectory) || hasParentSegment(configuration.StateDirectory) {
+	if configuration.StateDirectory == "" || len(configuration.StateDirectory) > 4_096 || strings.ContainsRune(configuration.StateDirectory, 0) || isPortableAbsolute(configuration.StateDirectory) || hasParentSegment(configuration.StateDirectory) {
 		return errors.New("state directory must be a relative wrapper-owned path without traversal")
 	}
 	if configuration.LogFormat != "json" && configuration.LogFormat != "human" {
@@ -75,6 +75,13 @@ func (configuration Config) Validate() error {
 		return errors.New("admin token is outside supported bounds")
 	}
 	return nil
+}
+
+func isPortableAbsolute(path string) bool {
+	if filepath.IsAbs(path) || strings.HasPrefix(path, "/") || strings.HasPrefix(path, `\`) {
+		return true
+	}
+	return len(path) >= 2 && ((path[0] >= 'A' && path[0] <= 'Z') || (path[0] >= 'a' && path[0] <= 'z')) && path[1] == ':'
 }
 
 func hasParentSegment(path string) bool {

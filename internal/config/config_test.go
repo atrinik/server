@@ -19,7 +19,7 @@ func TestRedactedNeverContainsToken(t *testing.T) {
 
 func TestRejectsTraversalAndUnboundedWork(t *testing.T) {
 	t.Parallel()
-	for _, path := range []string{"../state", "state/../other", "/tmp/state"} {
+	for _, path := range []string{"../state", "state/../other", "/tmp/state", `C:\state`, `\\server\state`} {
 		configuration := Default()
 		configuration.StateDirectory = path
 		if err := configuration.Validate(); err == nil {
