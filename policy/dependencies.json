@@ -29,6 +29,6 @@
   ],
   "actions": [
     {"name": "actions/checkout", "revision": "3d3c42e5aac5ba805825da76410c181273ba90b1", "version_hint": "v7.0.1", "source": "https://github.com/actions/checkout"},
-    {"name": "actions/setup-go", "revision": "924ae3a1cded613372ab5595356fb5720e22ba16", "version_hint": "v6.0.0", "source": "https://github.com/actions/setup-go"}
+    {"name": "actions/setup-go", "revision": "b7ad1dad31e06c5925ef5d2fc7ad053ef454303e", "version_hint": "v7.0.0", "source": "https://github.com/actions/setup-go"}
   ]
 }
