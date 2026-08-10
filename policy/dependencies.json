@@ -3,13 +3,17 @@
   "allowed_spdx": ["Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "MIT"],
   "forbidden_spdx": ["AGPL-1.0-only", "AGPL-1.0-or-later", "AGPL-3.0-only", "AGPL-3.0-or-later", "GPL-1.0-only", "GPL-1.0-or-later", "GPL-2.0-only", "GPL-2.0-or-later", "GPL-3.0-only", "GPL-3.0-or-later"],
   "modules": [
+    {"name": "github.com/atrinik/protocol", "version": "v1.3.0", "license": "MIT", "source": "https://github.com/atrinik/protocol"},
     {"name": "github.com/cespare/xxhash/v2", "version": "v2.3.0", "license": "MIT", "source": "https://github.com/cespare/xxhash"},
     {"name": "github.com/go-logr/logr", "version": "v1.4.4", "license": "Apache-2.0", "source": "https://github.com/go-logr/logr"},
     {"name": "github.com/go-logr/stdr", "version": "v1.2.2", "license": "Apache-2.0", "source": "https://github.com/go-logr/stdr"},
     {"name": "go.opentelemetry.io/auto/sdk", "version": "v1.2.1", "license": "Apache-2.0", "source": "https://github.com/open-telemetry/opentelemetry-go-instrumentation"},
     {"name": "go.opentelemetry.io/otel", "version": "v1.45.0", "license": "Apache-2.0", "source": "https://github.com/open-telemetry/opentelemetry-go"},
     {"name": "go.opentelemetry.io/otel/metric", "version": "v1.45.0", "license": "Apache-2.0", "source": "https://github.com/open-telemetry/opentelemetry-go"},
-    {"name": "go.opentelemetry.io/otel/trace", "version": "v1.45.0", "license": "Apache-2.0", "source": "https://github.com/open-telemetry/opentelemetry-go"}
+    {"name": "go.opentelemetry.io/otel/trace", "version": "v1.45.0", "license": "Apache-2.0", "source": "https://github.com/open-telemetry/opentelemetry-go"},
+    {"name": "golang.org/x/net", "version": "v0.57.0", "license": "BSD-3-Clause", "source": "https://go.googlesource.com/net"},
+    {"name": "golang.org/x/text", "version": "v0.40.0", "license": "BSD-3-Clause", "source": "https://go.googlesource.com/text"},
+    {"name": "google.golang.org/protobuf", "version": "v1.36.11", "license": "BSD-3-Clause", "source": "https://github.com/protocolbuffers/protobuf-go"}
   ],
   "governance": {
     "owner": "server maintainers",

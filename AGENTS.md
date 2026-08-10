@@ -54,6 +54,13 @@
   out-of-order, or impossible data before effects. Bound observability
   cardinality and keep credentials, account/private state, tokens, and network
   identities out of logs, traces, fixtures, panics, and snapshots.
+- Metaserver publication consumes the released Game Protocol 1 contract and
+  the persistent QUIC leaf identity. Reserve its monotonic sequence durably
+  before network I/O, retain the owner-local rolling request ceiling across
+  restart, and recover restored state only through the authenticated replay
+  minimum. Publish no inferred address; a direct endpoint is an explicit
+  canonical DNS hostname/port pair. Keep response credentials ephemeral until
+  a separately reviewed rendezvous consumer exists.
 - There is no Python runtime or CPython plugin ABI. CEL may run only in a
   versioned, typed, pure, deterministic, resource-bounded environment over
   immutable inputs. Starlark is not a baseline dependency and requires the

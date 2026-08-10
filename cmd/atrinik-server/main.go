@@ -19,6 +19,8 @@ import (
 	"github.com/atrinik/server/internal/observability"
 )
 
+var errInvalidPublisherConfiguration = errors.New("publisher configuration is invalid")
+
 func main() {
 	if err := run(os.Args[1:], os.Stdout, os.Stderr); err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -60,6 +62,7 @@ func parseConfig(arguments []string, stderr io.Writer) (config.Config, error) {
 	flags.IntVar(&settings.QueueCapacity, "queue-capacity", settings.QueueCapacity, "bounded simulation queue capacity")
 	flags.IntVar(&settings.CommandsPerTick, "commands-per-tick", settings.CommandsPerTick, "bounded simulation work per tick")
 	flags.DurationVar(&settings.ShutdownTimeout, "shutdown-timeout", settings.ShutdownTimeout, "bounded graceful shutdown deadline")
+	configurePublisherFlags(flags, &settings.Publisher)
 	settings.AdminToken = os.Getenv("ATRINIK_ADMIN_TOKEN")
 	if err := flags.Parse(arguments); err != nil {
 		return config.Config{}, err
@@ -80,9 +83,30 @@ func serve(arguments []string, stdout, stderr io.Writer) error {
 		return err
 	}
 	runtime := app.New(settings, logger)
+	publishRuntime, err := newPublisherRuntime(settings, logger)
+	if err != nil {
+		return err
+	}
+	if publishRuntime != nil {
+		if err := runtime.Register(app.StageConnectionDrain, app.HookFunc(publishRuntime.close)); err != nil {
+			_ = publishRuntime.sequence.Close()
+			_ = publishRuntime.root.Close()
+			return err
+		}
+	}
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
 	if err := runtime.Start(ctx); err != nil {
+		if publishRuntime != nil {
+			_ = publishRuntime.sequence.Close()
+			_ = publishRuntime.root.Close()
+		}
+		return err
+	}
+	if err := publishRuntime.start(ctx); err != nil {
+		shutdownContext, stop := context.WithTimeout(context.Background(), settings.ShutdownTimeout)
+		defer stop()
+		_ = runtime.Shutdown(shutdownContext)
 		return err
 	}
 	logger.Event(ctx, slog.LevelInfo, "lifecycle", "server.foundation-started", "server shell started; gameplay services are not yet ready")
