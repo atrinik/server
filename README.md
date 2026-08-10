@@ -72,6 +72,10 @@ bounded retry. The append-only ledger is owner-only, checksummed, bounded to
 64 MiB, and belongs in state backup/restore with the identity. Restoring an old
 copy is safe only through the authenticated `minimumNextSequence` recovery
 contract; sequence exhaustion requires operator recovery and never wraps.
+On POSIX systems owner-only means no group or other mode bits. On Windows the
+ledger is created with, and both the ledger and private key are validated
+against, a protected DACL containing exactly one full-control entry for the
+current user; inherited or additional grants fail closed.
 
 Startup publishes once. Visible updates supplied to the adapter coalesce behind
 the configured debounce, and unchanged liveness uses a jittered multi-hour

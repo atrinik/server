@@ -58,7 +58,7 @@ func TestLoadIdentityRequiresOwnerOnlyKeyWithinStateRoot(t *testing.T) {
 	if _, err := LoadIdentity(root, "certificate.pem", "private.pem"); err == nil {
 		t.Fatal("permissive private key was accepted")
 	}
-	if err := root.Chmod("private.pem", 0o600); err != nil {
+	if err := writeOwnerOnlyTestFile(root, "private.pem", privateKey); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := LoadIdentity(root, "certificate.pem", "private.pem"); err != nil {

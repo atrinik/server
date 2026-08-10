@@ -115,7 +115,10 @@ func readBoundedFile(root *os.Root, path string, requireOwnerOnly bool) ([]byte,
 	defer file.Close()
 	information, err := file.Stat()
 	if err != nil || !information.Mode().IsRegular() || information.Size() < 1 ||
-		information.Size() > maximumIdentityFileBytes || requireOwnerOnly && information.Mode().Perm()&0o077 != 0 {
+		information.Size() > maximumIdentityFileBytes {
+		return nil, errors.New("identity file is outside supported bounds")
+	}
+	if requireOwnerOnly && validateOwnerOnlyFile(file) != nil {
 		return nil, errors.New("identity file is outside supported bounds")
 	}
 	data := make([]byte, information.Size())

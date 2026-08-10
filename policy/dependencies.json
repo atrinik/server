@@ -12,6 +12,7 @@
     {"name": "go.opentelemetry.io/otel/metric", "version": "v1.45.0", "license": "Apache-2.0", "source": "https://github.com/open-telemetry/opentelemetry-go"},
     {"name": "go.opentelemetry.io/otel/trace", "version": "v1.45.0", "license": "Apache-2.0", "source": "https://github.com/open-telemetry/opentelemetry-go"},
     {"name": "golang.org/x/net", "version": "v0.57.0", "license": "BSD-3-Clause", "source": "https://go.googlesource.com/net"},
+    {"name": "golang.org/x/sys", "version": "v0.47.0", "license": "BSD-3-Clause", "source": "https://go.googlesource.com/sys"},
     {"name": "golang.org/x/text", "version": "v0.40.0", "license": "BSD-3-Clause", "source": "https://go.googlesource.com/text"},
     {"name": "google.golang.org/protobuf", "version": "v1.36.11", "license": "BSD-3-Clause", "source": "https://github.com/protocolbuffers/protobuf-go"}
   ],
@@ -19,7 +20,7 @@
     "owner": "server maintainers",
     "review_cadence": "monthly and on every dependency update",
     "eol_response": "upgrade, replace, or remove before an unsupported release ships",
-    "validation": "go mod verify, go list -deps, govulncheck, go-licenses, tests, Syft release SBOM"
+    "validation": "go mod verify, Linux and Windows go list -deps, govulncheck, go-licenses, tests, Syft release SBOM"
   },
   "tools": [
     {"name": "Go", "version": "1.26.5", "source": "https://go.dev/dl/", "license": "BSD-3-Clause"},

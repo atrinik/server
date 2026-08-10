@@ -11,7 +11,6 @@ import (
 	"io"
 	"math"
 	"os"
-	"path"
 	"sync"
 	"time"
 )
@@ -39,10 +38,7 @@ func OpenSequenceStore(root *os.Root, name string) (*SequenceStore, error) {
 	if root == nil || name == "" {
 		return nil, errors.New("publisher sequence path is empty")
 	}
-	if err := root.MkdirAll(path.Dir(name), 0o700); err != nil {
-		return nil, errors.New("create publisher state directory")
-	}
-	file, err := root.OpenFile(name, os.O_CREATE|os.O_RDWR, 0o600)
+	file, err := openOwnerOnlyFile(root, name)
 	if err != nil {
 		return nil, errors.New("open publisher sequence ledger")
 	}
@@ -55,7 +51,7 @@ func OpenSequenceStore(root *os.Root, name string) (*SequenceStore, error) {
 	information, err := file.Stat()
 	if err != nil || !information.Mode().IsRegular() ||
 		information.Size() < 0 || information.Size() > maximumSequenceBytes ||
-		information.Mode().Perm()&0o077 != 0 {
+		validateOwnerOnlyFile(file) != nil {
 		return nil, errors.New("publisher sequence ledger is unsafe or outside supported bounds")
 	}
 	completeBytes := information.Size() - information.Size()%sequenceRecordBytes

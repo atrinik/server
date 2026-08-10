@@ -15,6 +15,9 @@ sequences, certificates, response token, request source, endpoint candidates,
 and server metadata are prohibited from logs and metric labels. Publication is
 disabled by default, never follows redirects, and accepts only an explicit
 HTTPS origin plus an optional operator-configured DNS endpoint.
+Publisher key and sequence files require owner-only POSIX modes or a protected
+current-user-only Windows DACL. Permission metadata that cannot prove that
+boundary is rejected rather than approximated from portable mode bits.
 
 Logs and traces exclude passwords, tokens, salts, private keys, unrestricted
 chat/dialog, account/player names, raw network addresses, arbitrary errors, and

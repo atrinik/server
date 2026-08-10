@@ -16,8 +16,10 @@ expected=$(mktemp /tmp/atrinik-server-policy.XXXXXX)
 licenses=$(mktemp /tmp/atrinik-server-licenses.XXXXXX)
 trap 'rm -f -- "${actual}" "${expected}" "${licenses}"' EXIT
 
-go list -deps -f '{{with .Module}}{{if not .Main}}{{.Path}} {{.Version}}{{end}}{{end}}' ./... \
-  | sed '/^$/d' | sort -u >"${actual}"
+{
+  go list -deps -f '{{with .Module}}{{if not .Main}}{{.Path}} {{.Version}}{{end}}{{end}}' ./...
+  GOOS=windows GOARCH=amd64 go list -deps -f '{{with .Module}}{{if not .Main}}{{.Path}} {{.Version}}{{end}}{{end}}' ./...
+} | sed '/^$/d' | sort -u >"${actual}"
 jq -r '.modules[] | [.name, .version] | @tsv' policy/dependencies.json \
   | tr '\t' ' ' | sort -u >"${expected}"
 diff -u "${expected}" "${actual}"
@@ -27,7 +29,10 @@ if grep -Eiq '(^|/)(atrinik/(classic|client|editor|renderer|content-toolkit)|pyt
   exit 1
 fi
 
-go-licenses report ./... >"${licenses}"
+{
+  go-licenses report ./...
+  GOOS=windows GOARCH=amd64 go-licenses report ./...
+} | sort -u >"${licenses}"
 if grep -Eiq '(^|[,;[:space:]])(AGPL|GPL)-?[123](\.[0-9])?([+-]|$|[,;[:space:]])' "${licenses}"; then
   echo "reciprocal dependency license is not approved" >&2
   cat "${licenses}" >&2
