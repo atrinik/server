@@ -1,15 +1,31 @@
 # Atrinik server
 
-This repository is the fresh, clean-room implementation of the authoritative
-Atrinik game server in Go.
+This repository contains the authoritative Go server for Atrinik's agentic
+next-generation reimplementation.
+
+## Development model
+
+The replacement server is fresh, clean-room MIT-licensed Go code developed
+primarily through Codex workflows under maintainer direction, review,
+provenance controls, tests, and repository validation. It reimplements and
+improves Classic behavior and project direction; it is not a mechanical C or
+Python translation or a source port.
+
+Direct human-written code contributions are welcome. “Agentic” describes the
+project's primary current software-development workflow, not a requirement that
+every line, commit, or contributor use an agent. See the
+[replacement roadmap](https://github.com/atrinik/atrinik/issues/168) and the
+[canonical project authorship statement](https://github.com/atrinik/.github/blob/main/profile/README.md#the-project).
+
+Atrinik's art, maps, quests, lore, audio, and other game content remain
+external, human-created work. They retain their exact authors, upstream credit,
+licenses, and notices in their source repositories and are not covered by this
+server's MIT license.
 
 New source code in this repository is licensed under the MIT License. The
 classic GPL server is maintained in the
 [`server/` module of `atrinik/classic`](https://github.com/atrinik/classic/tree/main/server).
 Do not copy, translate, or adapt its source code.
-
-The implementation roadmap is tracked by
-[`atrinik/atrinik#168`](https://github.com/atrinik/atrinik/issues/168).
 
 ## Foundation status
 

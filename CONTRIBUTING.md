@@ -4,6 +4,12 @@ All implementation in this repository is independently written under MIT. The
 classic server and its runtime Python are GPL history, not source material for
 this repository.
 
+Direct human-written code contributions are welcome; contributors do not need
+to use an agent. “Agentic” describes the project's primary current
+software-development workflow. Human- and agent-assisted contributions follow
+the same clean-room, review, provenance, testing, and repository-validation
+requirements below.
+
 ## Permitted design inputs
 
 You may use public issues and specifications, black-box observable behavior,
