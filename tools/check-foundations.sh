@@ -23,6 +23,7 @@ required=(CONTRIBUTING.md PROVENANCE.md SECURITY.md THIRD_PARTY_NOTICES.md)
 for document in "${required[@]}"; do
   test -s "${document}"
 done
+tools/check-provenance-identity-reference.sh
 
 if grep -RhE '^[[:space:]]*uses:' .github/workflows \
   | grep -Ev '@[0-9a-f]{40}([[:space:]]|$)' >/dev/null; then
