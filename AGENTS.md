@@ -68,10 +68,17 @@
 
 ## Licensing, roadmap, and validation
 
-- New server work is MIT. Do not copy/adapt GPL implementation or tests.
-  Historical reuse follows local `PROVENANCE.md` and the canonical
-  `atrinik/atrinik/docs/PROVENANCE.md` registry; incomplete, mixed, or uncertain
-  evidence fails closed.
+- New server work is MIT. Do not add GPL/AGPL dependencies, bundles, or
+  unapproved GPL material. Independent implementation remains the default when
+  exact historical reuse cannot be proven. Admit reuse only under local
+  `PROVENANCE.md` and the canonical
+  [`atrinik/atrinik` registry](https://github.com/atrinik/atrinik/blob/main/docs/PROVENANCE.md):
+  each selected, independently separable contribution must itself fit one
+  historical row's “original past Atrinik contributions solely authored”
+  scope. Rows do not combine for joint, agent-generated, or inseparable work;
+  later or agent-generated material needs separate contemporaneous compatible
+  rights. The Classic source stays GPL-2.0-or-later; only exact recorded
+  destination material receives MIT permission.
 - `atrinik/atrinik#168` is the cross-repository roadmap; local issue acceptance
   criteria and milestones own delivery. Do not duplicate the M1-M6 plan here.
 - Run the real aggregate contract now present in this repository:
