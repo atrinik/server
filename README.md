@@ -5,7 +5,8 @@ next-generation reimplementation.
 
 ## Development model
 
-The replacement server is fresh, clean-room MIT-licensed Go code developed
+The current replacement server foundation is fresh, independently authored
+MIT-licensed Go code developed
 primarily through Codex workflows under maintainer direction, review,
 provenance controls, tests, and repository validation. It reimplements and
 improves Classic behavior and project direction; it is not a mechanical C or
@@ -25,7 +26,12 @@ server's MIT license.
 New source code in this repository is licensed under the MIT License. The
 classic GPL server is maintained in the
 [`server/` module of `atrinik/classic`](https://github.com/atrinik/classic/tree/main/server).
-Do not copy, translate, or adapt its source code.
+Its checked-in distribution remains GPL-2.0-or-later. Exact historical source
+reuse is possible only under the temporal, sole-authorship, separability, and
+destination-record requirements in the [provenance policy](PROVENANCE.md).
+That source-reuse route does not permit GPL dependencies or bundles; MIT
+permission applies only to the exact selected destination material recorded by
+the review.
 
 ## Foundation status
 
