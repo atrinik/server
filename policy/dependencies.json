@@ -23,7 +23,7 @@
     "validation": "go mod verify, Linux and Windows go list -deps, govulncheck, go-licenses, tests, Syft release SBOM"
   },
   "tools": [
-    {"name": "Go", "version": "1.26.5", "source": "https://go.dev/dl/", "license": "BSD-3-Clause"},
+    {"name": "Go", "version": "1.26.6", "source": "https://go.dev/dl/", "license": "BSD-3-Clause"},
     {"name": "staticcheck", "version": "0.7.0", "source": "https://pkg.go.dev/honnef.co/go/tools/cmd/staticcheck", "license": "MIT"},
     {"name": "govulncheck", "version": "1.6.0", "source": "https://pkg.go.dev/golang.org/x/vuln/cmd/govulncheck", "license": "BSD-3-Clause"},
     {"name": "go-licenses", "version": "1.6.0", "source": "https://github.com/google/go-licenses", "license": "Apache-2.0"},

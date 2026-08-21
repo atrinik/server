@@ -4,7 +4,7 @@ set -euo pipefail
 repository=$(git rev-parse --show-toplevel)
 cd "${repository}"
 
-test "$(go version | awk '{print $3}')" = go1.26.5
+test "$(go version | awk '{print $3}')" = go1.26.6
 for command in go staticcheck govulncheck go-licenses jq syft; do
   command -v "${command}" >/dev/null || { echo "missing required tool: ${command}" >&2; exit 1; }
 done
