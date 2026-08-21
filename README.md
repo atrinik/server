@@ -62,7 +62,7 @@ commands inward and immutable snapshots and committed events travel outward.
 
 ## Build and inspect
 
-Go 1.26.5 is required.
+Go 1.26.6 is required.
 
 ```sh
 go build ./cmd/atrinik-server
