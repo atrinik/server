@@ -1,5 +1,5 @@
-github.com/atrinik/protocol v1.3.0 h1:cBRCeMRampR+gJADYWro8pqV6g4B9wsW0vg3TlRuepg=
-github.com/atrinik/protocol v1.3.0/go.mod h1:0dgwIP+jrzj0ciI5f17H8ErmfP6Rqqnbkkx8AyK+vNk=
+github.com/atrinik/protocol v1.5.5 h1:QafJ5Gr8AqPEXNBbfh7yIC34Od5lNqv/5QL2HoJo9do=
+github.com/atrinik/protocol v1.5.5/go.mod h1:0dgwIP+jrzj0ciI5f17H8ErmfP6Rqqnbkkx8AyK+vNk=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
 github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

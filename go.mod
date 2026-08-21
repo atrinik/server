@@ -3,7 +3,7 @@ module github.com/atrinik/server
 go 1.26.6
 
 require (
-	github.com/atrinik/protocol v1.3.0
+	github.com/atrinik/protocol v1.5.5
 	go.opentelemetry.io/otel v1.45.0
 	go.opentelemetry.io/otel/trace v1.45.0
 	golang.org/x/sys v0.47.0
