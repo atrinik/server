@@ -21,6 +21,7 @@ go test -run=^$ -bench=. -benchtime=1x ./internal/kernel
 govulncheck ./...
 tools/check-foundations.sh
 tools/check-dependencies.sh
+tools/check-gitattributes.sh
 
 temporary=$(mktemp -d /tmp/atrinik-server-validation.XXXXXX)
 trap 'rm -rf -- "${temporary}"' EXIT
