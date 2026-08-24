@@ -20,7 +20,9 @@ git lfs install --local --force >/dev/null
 
 while IFS= read -r -d '' path; do
   case "${path}" in
-    *.c|*.cc|*.cpp|*.go|*.h|*.hpp|*.ini|*.json|*.md|*.mod|*.sh|*.sum|*.toml|*.txt|*.yml|*.yaml)
+    *.flac|*.gif|*.ico|*.it|*.jpeg|*.jpg|*.mid|*.midi|*.mp3|*.ogg|*.opus|*.otf|*.s3m|*.ttf|*.wav|*.webp|*.woff|*.woff2|*.xm|*.zip|*.png)
+      ;;
+    *)
       attribute=$(git check-attr filter -- "${path}")
       expected="${path}: filter: unspecified"
       if [[ ${attribute} != "${expected}" ]]; then
