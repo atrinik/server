@@ -6,8 +6,13 @@ cd "${repository}"
 
 output=${1:-dist}
 version=${2:-$(git describe --tags --always --dirty)}
-if [[ -n $(git status --porcelain) ]]; then
-  echo "release packaging requires a clean tracked and untracked worktree" >&2
+status=$(git status --porcelain=v1 --untracked-files=all)
+if [[ -n ${status} ]]; then
+  {
+    echo "release packaging requires a clean tracked and untracked worktree"
+    echo "worktree changes:"
+    printf '%s\n' "${status}"
+  } >&2
   exit 1
 fi
 if [[ -e ${output} ]]; then
