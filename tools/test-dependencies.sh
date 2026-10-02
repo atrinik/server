@@ -70,8 +70,8 @@ fixture_path="${fixture}/bin:${PATH}"
   cd "${fixture}"
   PATH="${fixture_path}" tools/generate-notices.sh >THIRD_PARTY_NOTICES.md
   PATH="${fixture_path}" tools/check-dependencies.sh
-  grep -Fq '| `github.com/atrinik/protocol` | `MIT` |' THIRD_PARTY_NOTICES.md
-  grep -Fq '| `example.com/windows-only` | `MIT` |' THIRD_PARTY_NOTICES.md
+  grep -Fq "| \`github.com/atrinik/protocol\` | \`MIT\` |" THIRD_PARTY_NOTICES.md
+  grep -Fq "| \`example.com/windows-only\` | \`MIT\` |" THIRD_PARTY_NOTICES.md
 
   if output=$(PATH="${fixture_path}" MOCK_LICENSE_OVERRIDE=GPL-3.0-only \
       tools/check-dependencies.sh 2>&1); then
