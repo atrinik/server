@@ -7,6 +7,8 @@ cd "${repository}"
 jq -e '
   .schema_version == 1 and
   (.modules | length > 0) and
+  ([.modules[].name] | length == (unique | length)) and
+  ([.modules[] | has("version")] | any | not) and
   ([.modules[].license] - .allowed_spdx | length == 0) and
   ([.modules[].license] | all(test("^(AGPL|GPL)-") | not))
 ' policy/dependencies.json >/dev/null
@@ -17,11 +19,10 @@ licenses=$(mktemp /tmp/atrinik-server-licenses.XXXXXX)
 trap 'rm -f -- "${actual}" "${expected}" "${licenses}"' EXIT
 
 {
-  go list -deps -f '{{with .Module}}{{if not .Main}}{{.Path}} {{.Version}}{{end}}{{end}}' ./...
-  GOOS=windows GOARCH=amd64 go list -deps -f '{{with .Module}}{{if not .Main}}{{.Path}} {{.Version}}{{end}}{{end}}' ./...
+  go list -deps -f '{{with .Module}}{{if not .Main}}{{.Path}}{{end}}{{end}}' ./...
+  GOOS=windows GOARCH=amd64 go list -deps -f '{{with .Module}}{{if not .Main}}{{.Path}}{{end}}{{end}}' ./...
 } | sed '/^$/d' | sort -u >"${actual}"
-jq -r '.modules[] | [.name, .version] | @tsv' policy/dependencies.json \
-  | tr '\t' ' ' | sort -u >"${expected}"
+jq -r '.modules[].name' policy/dependencies.json | sort -u >"${expected}"
 diff -u "${expected}" "${actual}"
 
 if grep -Eiq '(^|/)(atrinik/(classic|client|editor|renderer|content-toolkit)|python|cpython)(/|$)' "${actual}"; then
