@@ -75,5 +75,6 @@ does not change the server’s independent MIT license.
       or the pull request states that none are present.
 - [ ] Every copied fixture, asset, and data input has an explicit license and
       provenance record, or the pull request states that none are present.
-- [ ] Dependency policy, notices, SBOM inputs, and tests are updated.
+- [ ] Dependency license metadata, generated notices, SBOM inputs, and tests are
+      updated when the effective dependency graph changes.
 - [ ] `tools/validate.sh` passes and the change has bounded failure behavior.

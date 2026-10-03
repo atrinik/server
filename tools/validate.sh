@@ -20,6 +20,7 @@ go test -run=^$ -fuzz=FuzzJSONEventNeverEmitsSecret -fuzztime=1x ./internal/obse
 go test -run=^$ -bench=. -benchtime=1x ./internal/kernel
 govulncheck ./...
 tools/check-foundations.sh
+tools/test-dependencies.sh
 tools/check-dependencies.sh
 tools/check-gitattributes.sh
 
