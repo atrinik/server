@@ -21,7 +21,7 @@ func TestRedactedNeverContainsToken(t *testing.T) {
 func TestPublisherConfigurationIsDisabledByDefaultAndStrictWhenEnabled(t *testing.T) {
 	t.Parallel()
 	configuration := Default()
-	if configuration.Publisher.Enabled() || configuration.Validate() != nil {
+	if configuration.Publisher.Enabled() || configuration.Publisher.ProtocolMinor != 1 || configuration.Validate() != nil {
 		t.Fatal("default publisher configuration is not safely disabled")
 	}
 	configuration.Publisher.Origin = "https://publish.meta.atrinik.org"
@@ -30,6 +30,8 @@ func TestPublisherConfigurationIsDisabledByDefaultAndStrictWhenEnabled(t *testin
 		t.Fatalf("valid publisher configuration failed: %v", err)
 	}
 	for _, mutate := range []func(*PublisherConfig){
+		func(value *PublisherConfig) { value.ProtocolMinor = 0 },
+		func(value *PublisherConfig) { value.ProtocolMinor = 2 },
 		func(value *PublisherConfig) { value.Origin = "http://publish.meta.atrinik.org" },
 		func(value *PublisherConfig) { value.Origin = "https://publish.meta.atrinik.org/path" },
 		func(value *PublisherConfig) { value.CertificatePath = "../certificate.pem" },

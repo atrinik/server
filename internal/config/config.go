@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	metaserverv1 "github.com/atrinik/protocol/gen/go/atrinik/metaserver/v1"
-	protocolmeta "github.com/atrinik/protocol/metaserver"
+	metaserverv2 "github.com/atrinik/protocol/gen/go/atrinik/metaserver/v2"
+	protocolmeta "github.com/atrinik/protocol/metaserver/v2"
 )
 
 const (
@@ -47,7 +47,7 @@ type PublisherConfig struct {
 	ContentRevisionSHA256 string        `json:"content_revision_sha256"`
 	PlayersCapacity       uint          `json:"players_capacity"`
 	Public                bool          `json:"public"`
-	PasswordRequired      bool          `json:"password_required"`
+	AccessRequired        bool          `json:"access_required"`
 	DirectHostname        string        `json:"direct_hostname"`
 	DirectPort            uint          `json:"direct_port"`
 	HeartbeatInterval     time.Duration `json:"heartbeat_interval"`
@@ -80,7 +80,7 @@ type RedactedPublisherConfig struct {
 	ContentRevisionSHA256 string `json:"content_revision_sha256"`
 	PlayersCapacity       uint   `json:"players_capacity"`
 	Public                bool   `json:"public"`
-	PasswordRequired      bool   `json:"password_required"`
+	AccessRequired        bool   `json:"access_required"`
 	DirectHostname        string `json:"direct_hostname"`
 	DirectPort            uint   `json:"direct_port"`
 	HeartbeatInterval     string `json:"heartbeat_interval"`
@@ -100,6 +100,7 @@ func Default() Config {
 			CertificatePath:       "identity/certificate.pem",
 			PrivateKeyPath:        "identity/private-key.pem",
 			Name:                  "Atrinik Server",
+			ProtocolMinor:         1,
 			ContentID:             "atrinik-main",
 			ContentRevisionSHA256: strings.Repeat("0", 64),
 			PlayersCapacity:       100,
@@ -158,7 +159,8 @@ func (configuration PublisherConfig) Validate() error {
 	if !safeRelativePath(configuration.CertificatePath) || !safeRelativePath(configuration.PrivateKeyPath) {
 		return errors.New("publisher identity paths must be relative without traversal")
 	}
-	if configuration.ProtocolMinor > 65_535 || configuration.PlayersCapacity < 1 || configuration.PlayersCapacity > protocolmeta.MaximumDirectoryPlayers ||
+	// This build advertises the current access-token negotiation only.
+	if configuration.ProtocolMinor != 1 || configuration.PlayersCapacity < 1 || configuration.PlayersCapacity > protocolmeta.MaximumDirectoryPlayers ||
 		configuration.HeartbeatInterval < time.Hour || configuration.HeartbeatInterval > maximumPublisherHeartbeatInterval ||
 		configuration.ChangeDebounce <= 0 || configuration.ChangeDebounce > time.Minute ||
 		(configuration.DirectHostname == "") != (configuration.DirectPort == 0) || configuration.DirectPort > 65_535 {
@@ -169,20 +171,20 @@ func (configuration PublisherConfig) Validate() error {
 		return errors.New("publisher content revision must be lowercase SHA-256")
 	}
 	serverID := make([]byte, 32)
-	server := &metaserverv1.DirectoryServer{
+	server := &metaserverv2.DirectoryServer{
 		ServerId: serverID, CertificateSha256: append([]byte(nil), serverID...),
 		Name: configuration.Name, Description: configuration.Description,
 		ProtocolMajor: 1, ProtocolMinor: uint32(configuration.ProtocolMinor),
 		ContentId: configuration.ContentID, ContentRevisionSha256: contentRevision,
-		PlayersCapacity:  uint32(configuration.PlayersCapacity),
-		Status:           metaserverv1.DirectoryServerStatus_DIRECTORY_SERVER_STATUS_ONLINE,
-		PasswordRequired: configuration.PasswordRequired,
+		PlayersCapacity: uint32(configuration.PlayersCapacity),
+		Status:          metaserverv2.DirectoryServerStatus_DIRECTORY_SERVER_STATUS_ONLINE,
+		AccessRequired:  configuration.AccessRequired,
 	}
 	if configuration.Region != "" {
 		server.Region = &configuration.Region
 	}
 	if configuration.DirectHostname != "" {
-		server.Endpoint = &metaserverv1.DirectEndpoint{Hostname: configuration.DirectHostname, Port: uint32(configuration.DirectPort)}
+		server.Endpoint = &metaserverv2.DirectEndpoint{Hostname: configuration.DirectHostname, Port: uint32(configuration.DirectPort)}
 	}
 	if !protocolmeta.DirectoryServerCompatible(server, 1, uint32(configuration.ProtocolMinor), configuration.ContentID, contentRevision) {
 		return errors.New("publisher directory metadata is invalid")
@@ -236,7 +238,7 @@ func (configuration PublisherConfig) Redacted() RedactedPublisherConfig {
 		ProtocolMinor: configuration.ProtocolMinor, ContentID: configuration.ContentID,
 		ContentRevisionSHA256: configuration.ContentRevisionSHA256,
 		PlayersCapacity:       configuration.PlayersCapacity, Public: configuration.Public,
-		PasswordRequired: configuration.PasswordRequired, DirectHostname: configuration.DirectHostname,
+		AccessRequired: configuration.AccessRequired, DirectHostname: configuration.DirectHostname,
 		DirectPort: configuration.DirectPort, HeartbeatInterval: configuration.HeartbeatInterval.String(),
 		ChangeDebounce: configuration.ChangeDebounce.String(),
 	}
