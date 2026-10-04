@@ -100,6 +100,7 @@ func Default() Config {
 			CertificatePath:       "identity/certificate.pem",
 			PrivateKeyPath:        "identity/private-key.pem",
 			Name:                  "Atrinik Server",
+			ProtocolMinor:         1,
 			ContentID:             "atrinik-main",
 			ContentRevisionSHA256: strings.Repeat("0", 64),
 			PlayersCapacity:       100,
@@ -158,7 +159,8 @@ func (configuration PublisherConfig) Validate() error {
 	if !safeRelativePath(configuration.CertificatePath) || !safeRelativePath(configuration.PrivateKeyPath) {
 		return errors.New("publisher identity paths must be relative without traversal")
 	}
-	if configuration.ProtocolMinor > 65_535 || configuration.PlayersCapacity < 1 || configuration.PlayersCapacity > protocolmeta.MaximumDirectoryPlayers ||
+	// This build advertises the current access-token negotiation only.
+	if configuration.ProtocolMinor != 1 || configuration.PlayersCapacity < 1 || configuration.PlayersCapacity > protocolmeta.MaximumDirectoryPlayers ||
 		configuration.HeartbeatInterval < time.Hour || configuration.HeartbeatInterval > maximumPublisherHeartbeatInterval ||
 		configuration.ChangeDebounce <= 0 || configuration.ChangeDebounce > time.Minute ||
 		(configuration.DirectHostname == "") != (configuration.DirectPort == 0) || configuration.DirectPort > 65_535 {

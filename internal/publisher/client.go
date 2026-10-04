@@ -210,6 +210,10 @@ func (client *Client) buildRequest(ctx context.Context, snapshot Snapshot) (*htt
 }
 
 func (client *Client) bodyFor(snapshot Snapshot) ([]byte, error) {
+	// Metadata must not advertise historical or future negotiation for this build.
+	if snapshot.ProtocolMinor != 1 {
+		return nil, errors.New("publisher protocol version is unsupported")
+	}
 	serverID, err := hex.DecodeString(client.identity.serverID)
 	if err != nil {
 		return nil, errors.New("publisher identity is invalid")

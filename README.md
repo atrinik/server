@@ -96,7 +96,8 @@ foundation still has no gameplay listener, token administration, or private
 rendezvous consumer, and setting a flag does not implement those services.
 
 The publisher consumes the protocol-owned Game publisher v2 body and
-`accessRequired` field. Publisher identity remains SHA-256 of the exact DER leaf
+`accessRequired` field. This publisher advertises GP1 version 1.1; explicit
+older or future minor versions are rejected before publication. Publisher identity remains SHA-256 of the exact DER leaf
 certificate. The future QUIC transport's SPKI fingerprint is a distinct value;
 reissuing a certificate for the same key changes the publisher identity and must
 not silently rebind access routes.

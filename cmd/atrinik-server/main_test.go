@@ -72,9 +72,14 @@ func TestAccessPolicyIsIndependentOfPublicationVisibility(t *testing.T) {
 			configuration := config.Default().Publisher
 			configuration.Public, configuration.AccessRequired = public, required
 			snapshot, err := configuredSnapshot(configuration)
-			if err != nil || snapshot.Public != public || snapshot.AccessRequired != required {
+			if err != nil || snapshot.Public != public || snapshot.AccessRequired != required || snapshot.ProtocolMinor != 1 {
 				t.Fatal("publication snapshot lost admission policy")
 			}
+		}
+	}
+	for _, minor := range []string{"0", "2"} {
+		if err := run([]string{"config", "-publish-origin=https://publish.meta.atrinik.org", "-protocol-minor=" + minor}, &bytes.Buffer{}, &bytes.Buffer{}); err == nil {
+			t.Fatal("unsupported publisher protocol version was accepted")
 		}
 	}
 	if err := run([]string{"config", "-password-required=true"}, &bytes.Buffer{}, &bytes.Buffer{}); err == nil {

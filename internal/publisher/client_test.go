@@ -173,7 +173,7 @@ func TestClientPublishesOnlyAnExplicitCanonicalEndpoint(t *testing.T) {
 				t.Fatal(err)
 			}
 			parsed, err := protocolmeta.ParseGamePublishJSON(body)
-			if err != nil || parsed.Public != public || parsed.Server.AccessRequired != required {
+			if err != nil || parsed.Public != public || parsed.Server.AccessRequired != required || parsed.Server.ProtocolMinor != 1 {
 				t.Fatal("publisher changed independent visibility/admission policy")
 			}
 			if !bytes.Contains(body, []byte(`"schema":"atrinik-game-publish-v2"`)) ||
@@ -190,6 +190,16 @@ func TestClientPublishesOnlyAnExplicitCanonicalEndpoint(t *testing.T) {
 		}
 	}
 
+	for _, minor := range []uint32{0, 2} {
+		unsupported := snapshot
+		unsupported.ProtocolMinor = minor
+		if _, err := client.Publish(context.Background(), unsupported); err == nil {
+			t.Fatal("publisher accepted unsupported protocol negotiation")
+		}
+		if sequence.HighWater() != 0 {
+			t.Fatal("unsupported version consumed a sequence")
+		}
+	}
 	snapshot.Endpoint.Hostname = "192.0.2.1"
 	if err := client.ValidateSnapshot(snapshot); err == nil {
 		t.Fatal("numeric endpoint was accepted")
@@ -341,7 +351,7 @@ func testIdentity(t *testing.T) *Identity {
 func testSnapshot() Snapshot {
 	digest := sha256.Sum256([]byte("content"))
 	return Snapshot{
-		Name: "Test Server", Description: "", ProtocolMinor: 0, ContentID: "atrinik-main",
+		Name: "Test Server", Description: "", ProtocolMinor: 1, ContentID: "atrinik-main",
 		ContentRevisionSHA256: digest, PlayersOnline: 1, PlayersCapacity: 10,
 		Status: metaserverv2.DirectoryServerStatus_DIRECTORY_SERVER_STATUS_ONLINE,
 		Public: true,
