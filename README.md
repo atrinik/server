@@ -87,6 +87,20 @@ DER certificate, and sends the protocol-owned one-request signed body. HTTP
 redirects are forbidden and ordinary Go HTTPS certificate verification remains
 mandatory.
 
+Admission metadata uses `-access-required` (default `false`) independently of
+`-server-public`. Public open servers need no code; public protected servers
+advertise that a code is required. Private servers stay out of public listings
+regardless of their admission policy. The obsolete `-password-required` flag is
+rejected. These flags describe the future gameplay admission policy: the M1
+foundation still has no gameplay listener, token administration, or private
+rendezvous consumer, and setting a flag does not implement those services.
+
+The publisher consumes the protocol-owned Game publisher v2 body and
+`accessRequired` field. Publisher identity remains SHA-256 of the exact DER leaf
+certificate. The future QUIC transport's SPKI fingerprint is a distinct value;
+reissuing a certificate for the same key changes the publisher identity and must
+not silently rebind access routes.
+
 The non-secret publish sequence is durably reserved before every request in
 `state/metaserver/publish-sequence-v1.log`. Ambiguous attempts consume their
 sequence. A valid replay response raises the local high-water mark before one

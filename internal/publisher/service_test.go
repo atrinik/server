@@ -274,3 +274,35 @@ func assertNoAttempt[T any](t *testing.T, channel <-chan T, duration time.Durati
 	case <-time.After(duration):
 	}
 }
+
+func TestServicePublishesAdmissionPolicyChange(t *testing.T) {
+	t.Parallel()
+	attempts := make(chan Snapshot, 3)
+	service, err := NewService(attemptPublisherFunc(func(_ context.Context, snapshot Snapshot) (Result, error) {
+		attempts <- snapshot
+		return Result{Kind: ResultAccepted}, nil
+	}), testServiceConfig())
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		if err := service.Close(ctx); err != nil {
+			t.Error(err)
+		}
+	}()
+	snapshot := testSnapshot()
+	if err := service.Start(context.Background(), snapshot); err != nil {
+		t.Fatal(err)
+	}
+	receiveSnapshot(t, attempts)
+	snapshot.AccessRequired = true
+	if err := service.Update(snapshot); err != nil {
+		t.Fatal(err)
+	}
+	got := receiveSnapshot(t, attempts)
+	if !got.AccessRequired || got.Public != snapshot.Public {
+		t.Fatal("policy-only update was suppressed or changed visibility")
+	}
+}

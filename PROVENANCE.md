@@ -13,6 +13,18 @@ for the linked public issues. No historical MIT provenance grant is used.
 | `internal/observability` | `atrinik/server#21` and Go/OpenTelemetry/OpenMetrics public APIs | New implementation and synthetic bounded-input tests | Server maintainers |
 | `internal/publisher`, publisher configuration/lifecycle | `atrinik/server#68`, `atrinik/protocol@v1.3.0`, RFC 9421, and RFC 9530 | New Go HTTP/state scheduler implementation; protocol-owned MIT types, validators, and golden values | Server/protocol maintainers |
 
+The access-policy publication update derives from the protocol-owned MIT
+access-token and Game publisher v2 contracts at
+`atrinik/protocol@1584053ee5f5bb1d96b59ff85f4035579bc17617`.
+The certificate, body, digest and signature golden values in
+`internal/publisher/client_test.go` come from that revision's synthetic MIT
+`fixtures/metaserver-game-publisher-v2.json` (SHA-256
+`78eabb2287bd2f45e17e81c1eb071c807c2061687f93ca94ac03650df5f90a01`). Its configuration, scheduler,
+identity-boundary tests and synthetic cases are independently authored here;
+no Classic source, credentials, player state or generated bindings were copied.
+This metadata adapter does not implement future gameplay admission or token
+persistence.
+
 The metaserver publisher consumes only the released MIT protocol package; it
 does not copy or hand-edit generated bindings. Future gameplay bindings remain
 subject to the same pinned generator/drift contract.

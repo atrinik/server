@@ -17,13 +17,13 @@ import (
 	"testing"
 	"time"
 
-	metaserverv1 "github.com/atrinik/protocol/gen/go/atrinik/metaserver/v1"
-	protocolmeta "github.com/atrinik/protocol/metaserver"
+	metaserverv2 "github.com/atrinik/protocol/gen/go/atrinik/metaserver/v2"
+	protocolmeta "github.com/atrinik/protocol/metaserver/v2"
 )
 
-const fixtureCertificateBase64 = "MIIBlDCCATqgAwIBAgIBAjAKBggqhkjOPQQDAjApMScwJQYDVQQDDB5BdHJpbmlrIGdhbWUgcHVibGlzaGVyIGZpeHR1cmUwHhcNMjYwODEwMDI0MjMwWhcNMzYwODA3MDI0MjMwWjApMScwJQYDVQQDDB5BdHJpbmlrIGdhbWUgcHVibGlzaGVyIGZpeHR1cmUwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAARp3V9S6hwQtev297vKo09IIjxFJ03bkJGWhINrtl02+qX74Y1fqMEglkyDsDS5uaw9wkEqAZFjvqGds9Nlh8mLo1MwUTAdBgNVHQ4EFgQUM2ynnFKEB/m1Ih384LbZpnCE6KcwHwYDVR0jBBgwFoAUM2ynnFKEB/m1Ih384LbZpnCE6KcwDwYDVR0TAQH/BAUwAwEB/zAKBggqhkjOPQQDAgNIADBFAiA+GS9rOiluma03pBE7eOsp8qQWF2x5LLzwIvHtOr9cQQIhALFjaapew4tGe7YyjGNwCqd7ga08+HeUd0L2+KBkaORJ"
+const fixtureCertificateBase64 = "MIIBOjCB4KADAgECAgID6TAKBggqhkjOPQQDAjAmMSQwIgYDVQQDDBtBdHJpbmlrIGFjY2VzcyBmaXh0dXJlIG9ubHkwHhcNMjYwMTAxMDAwMDAwWhcNMzYwMTAxMDAwMDAwWjAmMSQwIgYDVQQDDBtBdHJpbmlrIGFjY2VzcyBmaXh0dXJlIG9ubHkwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAARrF9Hy4SxCR/i85uVjpEDydwN9gS3rM6D0oTlF2JjClk/jQuL+Gn+bjufrSnwPnhYrzjNXazFezsu2QGg3v1H1MAoGCCqGSM49BAMCA0kAMEYCIQDuJYjSE1s0zA8WTnf+zwhLUj7HiAN3I4u9Se0dmU2jvAIhALgq0zfa5cvIFi8xBKYqCN8gNsxnhvb2qPHKe/pUq8DT"
 
-const fixtureBody = "{\"schema\":\"atrinik-game-publish-v1\",\"serverId\":\"0145f46149b8483d33b8e02c9495b3e4ff2dd5ce342a22bb40913bba7a457d39\",\"certificate\":\"" + fixtureCertificateBase64 + "\",\"name\":\"Atrinik Game Alpha\",\"description\":\"Cooperative Ω\",\"region\":\"eu-west\",\"protocol\":{\"major\":1,\"minor\":0},\"content\":{\"id\":\"atrinik-main\",\"revisionSha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"players\":{\"online\":3,\"capacity\":64},\"status\":\"online\",\"public\":true,\"passwordRequired\":false,\"endpoint\":{\"hostname\":\"xn--bcher-kva.example.org\",\"port\":13327}}"
+const fixtureBody = "{\"schema\":\"atrinik-game-publish-v2\",\"serverId\":\"0d61dae94226a68c2452598898d33ef8eb97a73a040294825c2eedb01d6aee40\",\"certificate\":\"MIIBOjCB4KADAgECAgID6TAKBggqhkjOPQQDAjAmMSQwIgYDVQQDDBtBdHJpbmlrIGFjY2VzcyBmaXh0dXJlIG9ubHkwHhcNMjYwMTAxMDAwMDAwWhcNMzYwMTAxMDAwMDAwWjAmMSQwIgYDVQQDDBtBdHJpbmlrIGFjY2VzcyBmaXh0dXJlIG9ubHkwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAARrF9Hy4SxCR/i85uVjpEDydwN9gS3rM6D0oTlF2JjClk/jQuL+Gn+bjufrSnwPnhYrzjNXazFezsu2QGg3v1H1MAoGCCqGSM49BAMCA0kAMEYCIQDuJYjSE1s0zA8WTnf+zwhLUj7HiAN3I4u9Se0dmU2jvAIhALgq0zfa5cvIFi8xBKYqCN8gNsxnhvb2qPHKe/pUq8DT\",\"name\":\"Atrinik Game Alpha\",\"description\":\"Cooperative Ω\",\"region\":\"eu-west\",\"protocol\":{\"major\":1,\"minor\":0},\"content\":{\"id\":\"atrinik-main\",\"revisionSha256\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"},\"players\":{\"online\":3,\"capacity\":64},\"status\":\"online\",\"public\":true,\"accessRequired\":false,\"endpoint\":{\"hostname\":\"xn--bcher-kva.example.org\",\"port\":13327}}"
 
 func TestProtocolGoldenVectorBuildsAndVerifies(t *testing.T) {
 	t.Parallel()
@@ -37,18 +37,18 @@ func TestProtocolGoldenVectorBuildsAndVerifies(t *testing.T) {
 	}
 	components, err := protocolmeta.Build(protocolmeta.Parameters{
 		Profile: protocolmeta.GameProfile, Authority: "publish.meta.atrinik.org",
-		ServerID: "0145f46149b8483d33b8e02c9495b3e4ff2dd5ce342a22bb40913bba7a457d39",
+		ServerID: "0d61dae94226a68c2452598898d33ef8eb97a73a040294825c2eedb01d6aee40",
 		Sequence: 42, Nonce: nonce, Created: 1_800_000_000,
 	}, []byte(fixtureBody))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if components.ContentDigest != "sha-256=:Fzvnb28jWhv3lSDxHJKDzlJjNLnrc+1I+VLVdrqERGE=:" ||
-		components.Path != "/v1/servers/0145f46149b8483d33b8e02c9495b3e4ff2dd5ce342a22bb40913bba7a457d39/publish" {
+	if components.ContentDigest != "sha-256=:kN4WaATIYYnp8uxnhiymVfxvnAej189TJqqlw1vu1ec=:" ||
+		components.Path != "/v2/servers/0d61dae94226a68c2452598898d33ef8eb97a73a040294825c2eedb01d6aee40/publish" {
 		t.Fatalf("golden components diverged: %+v", components)
 	}
-	signature, err := base64.StdEncoding.DecodeString("PcGj3kxhPCqdxaEAUNkpVaj2Xu+b+3LkfIgu/pD8M+94GlUu/0EbjDVGgn41yqkzyLQZBtI6c3DzL/JzTG/QaQ==")
-	if err != nil || protocolmeta.VerifyCertificateSignature(certificate, "0145f46149b8483d33b8e02c9495b3e4ff2dd5ce342a22bb40913bba7a457d39", components.SignatureBase, signature) != nil {
+	signature, err := base64.StdEncoding.DecodeString("0ikEdkxrIEmpiwlYO1oTE2zF7UOVepL9VzaRppNhXnIARfex7YpQCnn5yAGpEYISEZJHHKXeGLXMPdpSp82Row==")
+	if err != nil || protocolmeta.VerifyCertificateSignature(certificate, "0d61dae94226a68c2452598898d33ef8eb97a73a040294825c2eedb01d6aee40", components.SignatureBase, signature) != nil {
 		t.Fatal("protocol golden signature did not verify")
 	}
 	parsed, err := protocolmeta.ParseGamePublishJSON([]byte(fixtureBody))
@@ -155,7 +155,7 @@ func TestClientPublishesOnlyAnExplicitCanonicalEndpoint(t *testing.T) {
 	}
 	snapshot := testSnapshot()
 	snapshot.Public = false
-	snapshot.Endpoint = &metaserverv1.DirectEndpoint{Hostname: "play.example.net", Port: 13327}
+	snapshot.Endpoint = &metaserverv2.DirectEndpoint{Hostname: "play.example.net", Port: 13327}
 	body, err := client.bodyFor(snapshot)
 	if err != nil {
 		t.Fatal(err)
@@ -165,6 +165,31 @@ func TestClientPublishesOnlyAnExplicitCanonicalEndpoint(t *testing.T) {
 		parsed.Server.Endpoint.Hostname != "play.example.net" || parsed.Server.Endpoint.Port != 13327 {
 		t.Fatalf("explicit endpoint body = %#v, %v", parsed, err)
 	}
+	for _, public := range []bool{false, true} {
+		for _, required := range []bool{false, true} {
+			snapshot.Public, snapshot.AccessRequired = public, required
+			body, err := client.bodyFor(snapshot)
+			if err != nil {
+				t.Fatal(err)
+			}
+			parsed, err := protocolmeta.ParseGamePublishJSON(body)
+			if err != nil || parsed.Public != public || parsed.Server.AccessRequired != required {
+				t.Fatal("publisher changed independent visibility/admission policy")
+			}
+			if !bytes.Contains(body, []byte(`"schema":"atrinik-game-publish-v2"`)) ||
+				!bytes.Contains(body, []byte(`"accessRequired":`)) || bytes.Contains(body, []byte(`"passwordRequired":`)) {
+				t.Fatal("publisher emitted an obsolete admission contract")
+			}
+			legacyField := bytes.Replace(body, []byte(`"accessRequired":`), []byte(`"passwordRequired":`), 1)
+			legacySchema := bytes.Replace(body, []byte(`atrinik-game-publish-v2`), []byte(`atrinik-game-publish-v1`), 1)
+			for _, legacy := range [][]byte{legacyField, legacySchema} {
+				if _, err := protocolmeta.ParseGamePublishJSON(legacy); err == nil {
+					t.Fatal("v2 parser accepted legacy admission metadata")
+				}
+			}
+		}
+	}
+
 	snapshot.Endpoint.Hostname = "192.0.2.1"
 	if err := client.ValidateSnapshot(snapshot); err == nil {
 		t.Fatal("numeric endpoint was accepted")
@@ -318,7 +343,7 @@ func testSnapshot() Snapshot {
 	return Snapshot{
 		Name: "Test Server", Description: "", ProtocolMinor: 0, ContentID: "atrinik-main",
 		ContentRevisionSHA256: digest, PlayersOnline: 1, PlayersCapacity: 10,
-		Status: metaserverv1.DirectoryServerStatus_DIRECTORY_SERVER_STATUS_ONLINE,
+		Status: metaserverv2.DirectoryServerStatus_DIRECTORY_SERVER_STATUS_ONLINE,
 		Public: true,
 	}
 }

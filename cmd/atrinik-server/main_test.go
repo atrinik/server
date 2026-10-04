@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -46,5 +47,37 @@ func TestCommandErrorsAreExplicit(t *testing.T) {
 		if err := run(arguments, &bytes.Buffer{}, &bytes.Buffer{}); err == nil {
 			t.Fatalf("arguments %q unexpectedly succeeded", arguments)
 		}
+	}
+}
+
+func TestAccessPolicyIsIndependentOfPublicationVisibility(t *testing.T) {
+	t.Parallel()
+	for _, public := range []bool{false, true} {
+		for _, required := range []bool{false, true} {
+			var output bytes.Buffer
+			args := []string{"config", "-server-public=" + strconv.FormatBool(public), "-access-required=" + strconv.FormatBool(required)}
+			if err := run(args, &output, &bytes.Buffer{}); err != nil {
+				t.Fatal(err)
+			}
+			var settings config.RedactedConfig
+			if err := json.Unmarshal(output.Bytes(), &settings); err != nil {
+				t.Fatal(err)
+			}
+			if settings.Publisher.Public != public || settings.Publisher.AccessRequired != required {
+				t.Fatal("configuration conflated visibility and admission policy")
+			}
+			if strings.Contains(output.String(), "password_required") || !strings.Contains(output.String(), "access_required") {
+				t.Fatal("configuration does not use the access-token policy field")
+			}
+			configuration := config.Default().Publisher
+			configuration.Public, configuration.AccessRequired = public, required
+			snapshot, err := configuredSnapshot(configuration)
+			if err != nil || snapshot.Public != public || snapshot.AccessRequired != required {
+				t.Fatal("publication snapshot lost admission policy")
+			}
+		}
+	}
+	if err := run([]string{"config", "-password-required=true"}, &bytes.Buffer{}, &bytes.Buffer{}); err == nil {
+		t.Fatal("obsolete shared-password flag was accepted")
 	}
 }
