@@ -12,6 +12,7 @@ This file is generated from the effective Go dependency graph and
 | `github.com/go-logr/stdr` | `Apache-2.0` | https://github.com/go-logr/stdr |
 | `go.opentelemetry.io/auto/sdk` | `Apache-2.0` | https://github.com/open-telemetry/opentelemetry-go-instrumentation |
 | `go.opentelemetry.io/otel` | `Apache-2.0` | https://github.com/open-telemetry/opentelemetry-go |
+| `go.opentelemetry.io/otel/log` | `Apache-2.0` | https://github.com/open-telemetry/opentelemetry-go |
 | `go.opentelemetry.io/otel/metric` | `Apache-2.0` | https://github.com/open-telemetry/opentelemetry-go |
 | `go.opentelemetry.io/otel/trace` | `Apache-2.0` | https://github.com/open-telemetry/opentelemetry-go |
 | `golang.org/x/net` | `BSD-3-Clause` | https://go.googlesource.com/net |
