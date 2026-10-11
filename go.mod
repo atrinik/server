@@ -1,6 +1,6 @@
 module github.com/atrinik/server
 
-go 1.26.6
+go 1.26.9
 
 require (
 	github.com/atrinik/protocol v1.5.5
