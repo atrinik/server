@@ -19,8 +19,8 @@ import (
 	"strings"
 	"time"
 
-	metaserverv1 "github.com/atrinik/protocol/gen/go/atrinik/metaserver/v1"
-	protocolmeta "github.com/atrinik/protocol/metaserver"
+	metaserverv2 "github.com/atrinik/protocol/gen/go/atrinik/metaserver/v2"
+	protocolmeta "github.com/atrinik/protocol/metaserver/v2"
 )
 
 const (
@@ -47,10 +47,10 @@ type Snapshot struct {
 	ContentRevisionSHA256 [32]byte
 	PlayersOnline         uint32
 	PlayersCapacity       uint32
-	Status                metaserverv1.DirectoryServerStatus
+	Status                metaserverv2.DirectoryServerStatus
 	Public                bool
-	PasswordRequired      bool
-	Endpoint              *metaserverv1.DirectEndpoint
+	AccessRequired        bool
+	Endpoint              *metaserverv2.DirectEndpoint
 }
 
 // ResultKind is a closed scheduling decision. It contains no response data.
@@ -210,11 +210,15 @@ func (client *Client) buildRequest(ctx context.Context, snapshot Snapshot) (*htt
 }
 
 func (client *Client) bodyFor(snapshot Snapshot) ([]byte, error) {
+	// Metadata must not advertise historical or future negotiation for this build.
+	if snapshot.ProtocolMinor != 1 {
+		return nil, errors.New("publisher protocol version is unsupported")
+	}
 	serverID, err := hex.DecodeString(client.identity.serverID)
 	if err != nil {
 		return nil, errors.New("publisher identity is invalid")
 	}
-	server := &metaserverv1.DirectoryServer{
+	server := &metaserverv2.DirectoryServer{
 		ServerId:              serverID,
 		CertificateSha256:     append([]byte(nil), serverID...),
 		Name:                  snapshot.Name,
@@ -227,7 +231,7 @@ func (client *Client) bodyFor(snapshot Snapshot) ([]byte, error) {
 		PlayersOnline:         snapshot.PlayersOnline,
 		PlayersCapacity:       snapshot.PlayersCapacity,
 		Status:                snapshot.Status,
-		PasswordRequired:      snapshot.PasswordRequired,
+		AccessRequired:        snapshot.AccessRequired,
 		Endpoint:              cloneEndpoint(snapshot.Endpoint),
 	}
 	body, err := protocolmeta.MarshalGamePublishJSON(&protocolmeta.GamePublishRequest{
@@ -350,11 +354,11 @@ func cloneString(value *string) *string {
 	return &copy
 }
 
-func cloneEndpoint(value *metaserverv1.DirectEndpoint) *metaserverv1.DirectEndpoint {
+func cloneEndpoint(value *metaserverv2.DirectEndpoint) *metaserverv2.DirectEndpoint {
 	if value == nil {
 		return nil
 	}
-	return &metaserverv1.DirectEndpoint{Hostname: value.Hostname, Port: value.Port}
+	return &metaserverv2.DirectEndpoint{Hostname: value.Hostname, Port: value.Port}
 }
 
 func (kind ResultKind) String() string { return string(kind) }

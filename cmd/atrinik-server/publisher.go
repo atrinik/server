@@ -10,7 +10,7 @@ import (
 	"log/slog"
 	"os"
 
-	metaserverv1 "github.com/atrinik/protocol/gen/go/atrinik/metaserver/v1"
+	metaserverv2 "github.com/atrinik/protocol/gen/go/atrinik/metaserver/v2"
 	"github.com/atrinik/server/internal/config"
 	"github.com/atrinik/server/internal/observability"
 	"github.com/atrinik/server/internal/publisher"
@@ -35,7 +35,7 @@ func configurePublisherFlags(flags *flag.FlagSet, configuration *config.Publishe
 	flags.StringVar(&configuration.ContentRevisionSHA256, "content-revision-sha256", configuration.ContentRevisionSHA256, "compiled-content revision digest")
 	flags.UintVar(&configuration.PlayersCapacity, "players-capacity", configuration.PlayersCapacity, "public player capacity")
 	flags.BoolVar(&configuration.Public, "server-public", configuration.Public, "publish this server in the public directory")
-	flags.BoolVar(&configuration.PasswordRequired, "password-required", configuration.PasswordRequired, "require independent game join authentication")
+	flags.BoolVar(&configuration.AccessRequired, "access-required", configuration.AccessRequired, "advertise required access-token admission (gameplay listener unavailable in M1)")
 	flags.StringVar(&configuration.DirectHostname, "direct-hostname", configuration.DirectHostname, "optional explicit public DNS fallback")
 	flags.UintVar(&configuration.DirectPort, "direct-port", configuration.DirectPort, "explicit public DNS fallback UDP port")
 	flags.DurationVar(&configuration.HeartbeatInterval, "publish-heartbeat", configuration.HeartbeatInterval, "slow liveness publication interval")
@@ -106,14 +106,14 @@ func configuredSnapshot(configuration config.PublisherConfig) (publisher.Snapsho
 		Name: configuration.Name, Description: configuration.Description,
 		ProtocolMinor: uint32(configuration.ProtocolMinor), ContentID: configuration.ContentID,
 		ContentRevisionSHA256: digest, PlayersCapacity: uint32(configuration.PlayersCapacity),
-		Status: metaserverv1.DirectoryServerStatus_DIRECTORY_SERVER_STATUS_ONLINE,
-		Public: configuration.Public, PasswordRequired: configuration.PasswordRequired,
+		Status: metaserverv2.DirectoryServerStatus_DIRECTORY_SERVER_STATUS_ONLINE,
+		Public: configuration.Public, AccessRequired: configuration.AccessRequired,
 	}
 	if configuration.Region != "" {
 		snapshot.Region = &configuration.Region
 	}
 	if configuration.DirectHostname != "" {
-		snapshot.Endpoint = &metaserverv1.DirectEndpoint{Hostname: configuration.DirectHostname, Port: uint32(configuration.DirectPort)}
+		snapshot.Endpoint = &metaserverv2.DirectEndpoint{Hostname: configuration.DirectHostname, Port: uint32(configuration.DirectPort)}
 	}
 	return snapshot, nil
 }

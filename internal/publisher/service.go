@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	metaserverv1 "github.com/atrinik/protocol/gen/go/atrinik/metaserver/v1"
+	metaserverv2 "github.com/atrinik/protocol/gen/go/atrinik/metaserver/v2"
 )
 
 const (
@@ -293,7 +293,7 @@ func (service *Service) observe(event ServiceEvent) {
 
 func validateSnapshot(snapshot Snapshot) error {
 	if snapshot.PlayersCapacity == 0 || snapshot.PlayersOnline > snapshot.PlayersCapacity ||
-		snapshot.Status == metaserverv1.DirectoryServerStatus_DIRECTORY_SERVER_STATUS_UNSPECIFIED {
+		snapshot.Status == metaserverv2.DirectoryServerStatus_DIRECTORY_SERVER_STATUS_UNSPECIFIED {
 		return errors.New("publisher snapshot is invalid")
 	}
 	return nil
@@ -311,14 +311,14 @@ func snapshotsEqual(left, right Snapshot) bool {
 		left.ContentID == right.ContentID && left.ContentRevisionSHA256 == right.ContentRevisionSHA256 &&
 		left.PlayersOnline == right.PlayersOnline && left.PlayersCapacity == right.PlayersCapacity &&
 		left.Status == right.Status && left.Public == right.Public &&
-		left.PasswordRequired == right.PasswordRequired && endpointsEqual(left.Endpoint, right.Endpoint)
+		left.AccessRequired == right.AccessRequired && endpointsEqual(left.Endpoint, right.Endpoint)
 }
 
 func optionalStringsEqual(left, right *string) bool {
 	return left == nil && right == nil || left != nil && right != nil && *left == *right
 }
 
-func endpointsEqual(left, right *metaserverv1.DirectEndpoint) bool {
+func endpointsEqual(left, right *metaserverv2.DirectEndpoint) bool {
 	return left == nil && right == nil || left != nil && right != nil &&
 		left.Hostname == right.Hostname && left.Port == right.Port
 }

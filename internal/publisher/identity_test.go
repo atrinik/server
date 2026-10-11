@@ -7,8 +7,10 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"crypto/sha256"
 	"crypto/x509"
 	"crypto/x509/pkix"
+	"encoding/hex"
 	"encoding/pem"
 	"math/big"
 	"os"
@@ -87,4 +89,36 @@ func testIdentityPEM(t *testing.T) ([]byte, []byte) {
 	}
 	return pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certificateDER}),
 		pem.EncodeToMemory(&pem.Block{Type: "PRIVATE KEY", Bytes: privateDER})
+}
+
+func TestPublisherIdentityHashesExactLeafRatherThanPublicKey(t *testing.T) {
+	t.Parallel()
+	certificatePEM, privateKeyPEM := testIdentityPEM(t)
+	identity, err := ParseIdentityPEM(certificatePEM, privateKeyPEM)
+	if err != nil {
+		t.Fatal(err)
+	}
+	certificate, err := x509.ParseCertificate(identity.certificateDER)
+	if err != nil {
+		t.Fatal(err)
+	}
+	leafDigest := sha256.Sum256(certificate.Raw)
+	spkiDigest := sha256.Sum256(certificate.RawSubjectPublicKeyInfo)
+	if identity.serverID != hex.EncodeToString(leafDigest[:]) || identity.serverID == hex.EncodeToString(spkiDigest[:]) {
+		t.Fatal("publisher identity confused exact leaf and transport SPKI hashes")
+	}
+	// Reissuing a certificate for the same key deliberately changes publisher
+	// identity; transport SPKI equality must never silently rebind access routes.
+	certificate.SerialNumber = big.NewInt(2)
+	reissuedDER, err := x509.CreateCertificate(rand.Reader, certificate, certificate, &identity.privateKey.PublicKey, identity.privateKey)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reissued, err := ParseIdentityPEM(pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: reissuedDER}), privateKeyPEM)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if identity.serverID == reissued.serverID {
+		t.Fatal("reissued certificate retained publisher identity")
+	}
 }
