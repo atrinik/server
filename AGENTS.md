@@ -96,3 +96,9 @@
   repository validation for this Go server and do not route it through classic
   C code. Commits and pull-request titles use Conventional Commits;
   semantic-release owns releases and tags.
+- Dependency review is advisory, including operational errors. Before merge, the
+  implementing Codex must read its PR comment or job summary, fix actionable
+  introduced risk, or record explicit maintainer acceptance of existing risk.
+  Fork and Dependabot comment permissions may be restricted; read the job
+  summary when the comment is unavailable. Validate workflow changes with
+  actionlint and `git diff --check`.
