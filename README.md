@@ -18,10 +18,9 @@ every line, commit, or contributor use an agent. See the
 [replacement roadmap](https://github.com/atrinik/atrinik/issues/168) and the
 [canonical project authorship statement](https://github.com/atrinik/.github/blob/main/profile/README.md#the-project).
 
-Atrinik's art, maps, quests, lore, audio, and other game content remain
-external, human-created work. They retain their exact authors, upstream credit,
-licenses, and notices in their source repositories and are not covered by this
-server's MIT license.
+Atrinik's art, maps, quests, lore, audio, and other game content are external
+inputs. They retain their exact authors, upstream credit, licenses, and notices
+in their source repositories and are not covered by this server's MIT license.
 
 New source code in this repository is licensed under the MIT License. The
 classic GPL server is maintained in the
