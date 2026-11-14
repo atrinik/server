@@ -6,7 +6,7 @@ require (
 	github.com/atrinik/protocol v1.5.6-0.20261004163427-58ed75f13fab
 	go.opentelemetry.io/otel v1.47.0
 	go.opentelemetry.io/otel/trace v1.47.0
-	golang.org/x/sys v0.49.0
+	golang.org/x/sys v0.50.0
 )
 
 require (
